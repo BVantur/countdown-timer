@@ -17,20 +17,32 @@ package com.example.androiddevchallenge
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ChainStyle
+import androidx.constraintlayout.compose.ConstraintLayout
+import com.example.androiddevchallenge.model.Numpad
+import com.example.androiddevchallenge.model.TimeUnitType
+import com.example.androiddevchallenge.ui.Timer
 import com.example.androiddevchallenge.ui.theme.MyTheme
 
 class MainActivity : AppCompatActivity() {
+    private val viewModel: MainViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MyTheme {
-                MyApp()
+                MyApp(viewModel)
             }
         }
     }
@@ -38,24 +50,36 @@ class MainActivity : AppCompatActivity() {
 
 // Start building your app here!
 @Composable
-fun MyApp() {
+fun MyApp(viewModel: MainViewModel) {
     Surface(color = MaterialTheme.colors.background) {
-        Text(text = "Ready... Set... GO!")
-    }
-}
+        ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
-@Preview("Light Theme", widthDp = 360, heightDp = 640)
-@Composable
-fun LightPreview() {
-    MyTheme {
-        MyApp()
-    }
-}
-
-@Preview("Dark Theme", widthDp = 360, heightDp = 640)
-@Composable
-fun DarkPreview() {
-    MyTheme(darkTheme = true) {
-        MyApp()
+            val timeUnitType: TimeUnitType by viewModel.timeUnitType.observeAsState(TimeUnitType.SECOND)
+            val (timer, numpad, button) = createRefs()
+            createVerticalChain(timer, numpad, button, chainStyle = ChainStyle.Spread)
+            Timer(Modifier.constrainAs(timer) {
+                top.linkTo(parent.top, margin = 64.dp)
+                bottom.linkTo(numpad.top)
+            }, viewModel)
+            Numpad(Modifier.constrainAs(numpad) {
+                top.linkTo(timer.bottom, margin = 16.dp)
+                bottom.linkTo(button.top)
+            }) {
+                if (it.isNotBlank()) {
+                    viewModel.sendNum(it)
+                }
+            }
+            Button(onClick = { viewModel.startTimer() }, modifier = Modifier.constrainAs(button) {
+                top.linkTo(numpad.bottom, 16.dp)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+                bottom.linkTo(parent.bottom)
+            }) {
+                if (timeUnitType.isNoneType()) {
+                    Text("Stop")
+                } else
+                    Text("Start")
+            }
+        }
     }
 }
