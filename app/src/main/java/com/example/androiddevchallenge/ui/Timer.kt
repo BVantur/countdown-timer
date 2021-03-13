@@ -1,3 +1,18 @@
+/*
+ * Copyright 2021 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.example.androiddevchallenge.ui
 
 import androidx.compose.foundation.clickable
@@ -29,25 +44,34 @@ fun Timer(modifier: Modifier, viewModel: MainViewModel) {
         val timeUnitType: TimeUnitType by viewModel.timeUnitType.observeAsState(TimeUnitType.SECOND)
         val (hoursTimer, minutesTimer, secondsTimer) = createRefs()
         createHorizontalChain(hoursTimer, minutesTimer, secondsTimer, chainStyle = ChainStyle.Packed)
-        TimerNumber(Modifier.constrainAs(hoursTimer) {
-            top.linkTo(parent.top)
-            start.linkTo(parent.start)
-            end.linkTo(minutesTimer.start)
-        }, TimerNumberType.HOUR, hours, timeUnitType.isHourType()) {
+        TimerNumber(
+            Modifier.constrainAs(hoursTimer) {
+                top.linkTo(parent.top)
+                start.linkTo(parent.start)
+                end.linkTo(minutesTimer.start)
+            },
+            TimerNumberType.HOUR, hours, timeUnitType.isHourType()
+        ) {
             viewModel.selectHourTimeUnit()
         }
-        TimerNumber(Modifier.constrainAs(minutesTimer) {
-            top.linkTo(hoursTimer.top)
-            start.linkTo(hoursTimer.end, margin = 16.dp)
-            end.linkTo(secondsTimer.start)
-        } , TimerNumberType.MINUTE, minutes, timeUnitType.isMinuteType()) {
+        TimerNumber(
+            Modifier.constrainAs(minutesTimer) {
+                top.linkTo(hoursTimer.top)
+                start.linkTo(hoursTimer.end, margin = 16.dp)
+                end.linkTo(secondsTimer.start)
+            },
+            TimerNumberType.MINUTE, minutes, timeUnitType.isMinuteType()
+        ) {
             viewModel.selectMinuteTimeUnit()
         }
-        TimerNumber(Modifier.constrainAs(secondsTimer) {
-            top.linkTo(hoursTimer.top)
-            start.linkTo(minutesTimer.end, margin = 16.dp)
-            end.linkTo(parent.end)
-        }, TimerNumberType.SECOND, seconds, timeUnitType.isSecondType()) {
+        TimerNumber(
+            Modifier.constrainAs(secondsTimer) {
+                top.linkTo(hoursTimer.top)
+                start.linkTo(minutesTimer.end, margin = 16.dp)
+                end.linkTo(parent.end)
+            },
+            TimerNumberType.SECOND, seconds, timeUnitType.isSecondType()
+        ) {
             viewModel.selectSecondTimeUnit()
         }
     }
@@ -61,13 +85,15 @@ fun TimerNumber(modifier: Modifier, timerType: TimerNumberType, value: Int, sele
         textColor = MaterialTheme.colors.primary
     }
     Row(modifier = modifier) {
-        Column(modifier = Modifier.clickable {
-            onClick()
-        }) {
+        Column(
+            modifier = Modifier.clickable {
+                onClick()
+            }
+        ) {
             Text(value.presentationValue(), modifier = Modifier.align(Alignment.CenterHorizontally), fontSize = 56.sp, color = textColor)
             Text(timerType.text, modifier = Modifier.align(Alignment.CenterHorizontally), fontSize = 12.sp)
         }
-        if(timerType != TimerNumberType.SECOND) {
+        if (timerType != TimerNumberType.SECOND) {
             Text(text = ":", fontSize = 52.sp, modifier = Modifier.padding(start = 16.dp))
         }
     }

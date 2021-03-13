@@ -57,24 +57,32 @@ fun MyApp(viewModel: MainViewModel) {
             val timeUnitType: TimeUnitType by viewModel.timeUnitType.observeAsState(TimeUnitType.SECOND)
             val (timer, numpad, button) = createRefs()
             createVerticalChain(timer, numpad, button, chainStyle = ChainStyle.Spread)
-            Timer(Modifier.constrainAs(timer) {
-                top.linkTo(parent.top, margin = 64.dp)
-                bottom.linkTo(numpad.top)
-            }, viewModel)
-            Numpad(Modifier.constrainAs(numpad) {
-                top.linkTo(timer.bottom, margin = 16.dp)
-                bottom.linkTo(button.top)
-            }) {
+            Timer(
+                Modifier.constrainAs(timer) {
+                    top.linkTo(parent.top, margin = 64.dp)
+                    bottom.linkTo(numpad.top)
+                },
+                viewModel
+            )
+            Numpad(
+                Modifier.constrainAs(numpad) {
+                    top.linkTo(timer.bottom, margin = 16.dp)
+                    bottom.linkTo(button.top)
+                }
+            ) {
                 if (it.isNotBlank()) {
                     viewModel.sendNum(it)
                 }
             }
-            Button(onClick = { viewModel.startTimer() }, modifier = Modifier.constrainAs(button) {
-                top.linkTo(numpad.bottom, 16.dp)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                bottom.linkTo(parent.bottom)
-            }) {
+            Button(
+                onClick = { viewModel.startTimer() },
+                modifier = Modifier.constrainAs(button) {
+                    top.linkTo(numpad.bottom, 16.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    bottom.linkTo(parent.bottom)
+                }
+            ) {
                 if (timeUnitType.isNoneType()) {
                     Text("Stop")
                 } else
