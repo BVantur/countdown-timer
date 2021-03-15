@@ -32,8 +32,8 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ChainStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.androiddevchallenge.MainViewModel
-import com.example.androiddevchallenge.TimerNumberType
 import com.example.androiddevchallenge.model.TimeUnitType
+import com.example.androiddevchallenge.model.TimerNumberType
 
 @Composable
 fun Timer(modifier: Modifier, viewModel: MainViewModel) {
